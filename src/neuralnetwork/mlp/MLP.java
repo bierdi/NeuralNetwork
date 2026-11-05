@@ -1,6 +1,7 @@
 package neuralnetwork.mlp;
 
 import activationfunctions.ActivationFunction;
+import exceptions.DimensionMismatchException;
 import exceptions.InvalidDataException;
 import initfunctions.InitFunction;
 import java.io.File;
@@ -64,7 +65,7 @@ public class MLP extends Network {
         
     }
     
-    public MLP(MLPLayer[] layers, LossFunction loss) {
+    public MLP(MLPLayer[] layers, LossFunction loss) throws DimensionMismatchException {
         
         if (layers == null) {
             throw new IllegalArgumentException("No null parameters allowed");
@@ -84,12 +85,12 @@ public class MLP extends Network {
             int[] inputDimensions = layers[i].getInputDimensions();
             
             if (outputDimensions.length != inputDimensions.length) {
-                throw new IllegalArgumentException("Dimensions do not fit");
+                throw new DimensionMismatchException("Dimensions do not fit");
             }
             
             for (int j = 0; j < outputDimensions.length; j++) {
                 if (outputDimensions[j] != inputDimensions[j]) {
-                    throw new IllegalArgumentException("Dimensions do not fit");
+                    throw new DimensionMismatchException("Dimensions do not fit");
                 }
             }
             
@@ -123,14 +124,14 @@ public class MLP extends Network {
     }
 
     @Override
-    public Vector forwardPass(Tensor input) {
+    public Vector forwardPass(Tensor input) throws DimensionMismatchException {
         
         if (input == null) {
             throw new IllegalArgumentException("Input must not be null");
         }
         
         if (input.getSize() != getInputDimensions()[0]) {
-            throw new IllegalArgumentException("Input dimensions wrong");
+            throw new DimensionMismatchException("Input dimensions wrong");
         }
         
         Tensor inOut = input.deepCopy();
@@ -143,7 +144,7 @@ public class MLP extends Network {
     }
     
     @Override
-    public void backwardPass(Tensor input, Tensor expectation) {
+    public void backwardPass(Tensor input, Tensor expectation) throws DimensionMismatchException {
         
         Tensor lossDerivative = loss.derivative(forwardPass(input), expectation);
         

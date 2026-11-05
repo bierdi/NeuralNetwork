@@ -420,9 +420,15 @@ public class Tensor {
         Tensor copy = new Tensor();
 
         copy.dimensions = this.dimensions.clone();
-        float[] valueCopy = new float[this.size];
-        valueCopyRec(new int[this.dimensions.length], valueCopy, this.dimensions.length - 1, new int[] {0});
-        copy.values = valueCopy;
+        
+        if (this.isView) {
+            float[] valueCopy = new float[this.size];
+            valueCopyRec(new int[this.dimensions.length], valueCopy, this.dimensions.length - 1, new int[] {0});
+            copy.values = valueCopy;
+        } else {
+            copy.values = this.values.clone();
+        }
+        
         copy.size = this.size;
         
         copy.calculateOffsets(dimensions);

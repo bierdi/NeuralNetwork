@@ -1,5 +1,7 @@
 package tensors;
 
+import exceptions.DimensionMismatchException;
+
 /**
  *
  * @author bierdi
@@ -138,6 +140,45 @@ public class Matrix extends Tensor {
 
         return result;
     }
+    
+    public void addMatrix(Matrix m) throws DimensionMismatchException {
+        
+        if (m == null) {
+            throw new IllegalArgumentException("No null parameters allowed");
+        }
+        
+        if (this.getHeight() != m.getHeight() || this.getWidth() != m.getWidth()) {
+            throw new DimensionMismatchException("Dimensions do not fit");
+        }
+        
+        for (int i = 0; i < m.getWidth(); i++) {
+            for (int j = 0; j < m.getHeight(); j++) {
+                this.setValueUnchecked(this.getValueUnchecked(i, j) + m.getValueUnchecked(i, j), i, j);
+            }
+        }
+        
+    }
+    
+    public static Matrix addMatrices(Matrix m0, Matrix m1) throws DimensionMismatchException {
+        
+        if (m0 == null || m1 == null) {
+            throw new IllegalArgumentException("No null parameters allowed");
+        }
+        
+        if (m0.getHeight() != m1.getHeight() || m0.getWidth() != m1.getWidth()) {
+            throw new DimensionMismatchException("Dimensions do not fit");
+        }
+        
+        Matrix result = new Matrix(m0.getWidth(), m0.getHeight());
+        
+        for (int i = 0; i < m0.getWidth(); i++) {
+            for (int j = 0; j < m0.getHeight(); j++) {
+                result.setValueUnchecked(m0.getValueUnchecked(i, j) + m1.getValueUnchecked(i, j), i, j);
+            }
+        }
+        
+        return result;
+    }
 
     public static Matrix createFromVectors(Vector v0, Vector v1) {
 
@@ -181,6 +222,10 @@ public class Matrix extends Tensor {
 
         return this.values[startIndex + y * this.offsets[1] + x * this.offsets[0]];
     }
+    
+    private float getValueUnchecked(int x, int y) {
+        return this.values[startIndex + y * this.offsets[1] + x * this.offsets[0]];
+    }
 
     public void setValue(float value, int x, int y) {
 
@@ -188,6 +233,10 @@ public class Matrix extends Tensor {
             throw new IllegalArgumentException("Position out of bounds");
         }
 
+        this.values[startIndex + y * this.offsets[1] + x * this.offsets[0]] = value;
+    }
+    
+    private void setValueUnchecked(float value, int x, int y) {
         this.values[startIndex + y * this.offsets[1] + x * this.offsets[0]] = value;
     }
 

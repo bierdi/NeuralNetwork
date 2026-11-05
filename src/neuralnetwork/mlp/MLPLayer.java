@@ -1,6 +1,7 @@
 package neuralnetwork.mlp;
 
 import activationfunctions.ActivationFunction;
+import exceptions.DimensionMismatchException;
 import initfunctions.InitFunction;
 import neuralnetwork.Layer;
 import tensors.Matrix;
@@ -13,14 +14,14 @@ import tensors.Vector;
  */
 public class MLPLayer extends Layer {
     
-    public MLPLayer(Matrix weights, Vector biases, ActivationFunction activator) {
+    public MLPLayer(Matrix weights, Vector biases, ActivationFunction activator) throws DimensionMismatchException {
         
         if (weights == null || biases == null || activator == null) {
             throw new IllegalArgumentException("No null parameters allowed");
         }
         
         if (weights.getHeight() != biases.getSize()) {
-            throw new IllegalArgumentException("Dimensions do not fit");
+            throw new DimensionMismatchException("Dimensions do not fit");
         }
         
         this.weights = weights.deepCopy();
@@ -52,10 +53,10 @@ public class MLPLayer extends Layer {
     }
     
     @Override
-    public Vector forwardPass(Tensor input) {
+    public Vector forwardPass(Tensor input) throws DimensionMismatchException {
         
         inputCache = input;
-        Tensor tmpResult = Tensor.addTensors(Matrix.multiplyMatrixVector(Matrix.tensorToMatrix(weights), Vector.tensorToVector(input)), biases);
+        Tensor tmpResult = Vector.addVectors(Matrix.multiplyMatrixVector(Matrix.tensorToMatrix(weights), Vector.tensorToVector(input)), Vector.tensorToVector(biases));
         tmpResultCache = tmpResult.deepCopy();
         activator.apply(tmpResult);
         
@@ -63,7 +64,7 @@ public class MLPLayer extends Layer {
     }
 
     @Override
-    public Vector backwardPass(Tensor gradient, Vector globalGradient) {
+    public Vector backwardPass(Tensor gradient, Vector globalGradient) throws DimensionMismatchException {
         
         Tensor tmpResultCacheCopy = tmpResultCache.deepCopy();
         
@@ -73,26 +74,26 @@ public class MLPLayer extends Layer {
         Matrix weightDerivatives = Matrix.createFromVectors(Vector.tensorToVector(inputCache), Vector.tensorToVector(gradient));
         
         //Matrix weightGradient = new Matrix(weights.getWidth(), weights.getHeight(), globalGradient, gradientIndex, gradientIndex + weights.getSize());
-        Tensor weightGradient = Tensor.createView(weights.getDimensions(), globalGradient, new int[] {1,1}, new int[] {gradientIndex});
-        weightGradient.addTensor(weightDerivatives);
+        Matrix weightGradient = Matrix.tensorToMatrix(Tensor.createView(weights.getDimensions(), globalGradient, new int[] {1,1}, new int[] {gradientIndex}));
+        weightGradient.addMatrix(weightDerivatives);
         
         //Vector biasGradient = new Vector(biases.getSize(), globalGradient, gradientIndex + weights.getSize(), gradientIndex + weights.getSize() + biases.getSize());
-        Tensor biasGradient = Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()});
-        biasGradient.addTensor(gradient);
+        Vector biasGradient = Vector.tensorToVector(Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()}));
+        biasGradient.addVector(Vector.tensorToVector(gradient));
         
         return Matrix.multiplyMatrixVector(Matrix.transposeMatrix(Matrix.tensorToMatrix(weights)), Vector.tensorToVector(gradient));
     }
 
     @Override
-    public void learn(Vector globalGradient) {
+    public void learn(Vector globalGradient) throws DimensionMismatchException {
         
         //Matrix weightGradient = new Matrix(weights.getWidth(), weights.getHeight(), globalGradient, gradientIndex, gradientIndex + weights.getSize());
         //Vector biasGradient = new Vector(biases.getSize(), globalGradient, gradientIndex + weights.getSize(), gradientIndex + weights.getSize() + biases.getSize());
-        Tensor weightGradient = Tensor.createView(weights.getDimensions(), globalGradient, new int[] {1,1}, new int[] {gradientIndex});
-        Tensor biasGradient = Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()});
+        Matrix weightGradient = Matrix.tensorToMatrix(Tensor.createView(weights.getDimensions(), globalGradient, new int[] {1,1}, new int[] {gradientIndex}));
+        Vector biasGradient = Vector.tensorToVector(Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()}));
         
-        weights.addTensor(weightGradient);
-        biases.addTensor(biasGradient);
+        Matrix.tensorToMatrix(weights).addMatrix(weightGradient);
+        Vector.tensorToVector(biases).addTensor(biasGradient);
         
     }
 
@@ -142,7 +143,7 @@ public class MLPLayer extends Layer {
     }
 
     @Override
-    public MLPLayer deepCopy() {
+    public MLPLayer deepCopy() throws DimensionMismatchException {
         return new MLPLayer(Matrix.tensorToMatrix(weights), Vector.tensorToVector(biases), activator);
     }
     

@@ -1,5 +1,6 @@
 package neuralnetwork;
 
+import exceptions.DimensionMismatchException;
 import java.io.File;
 import java.io.IOException;
 import lossfunctions.*;
@@ -22,14 +23,14 @@ public abstract class Network {
     
     protected int totalNumberParams;
     
-    public abstract Tensor forwardPass(Tensor input);
-    public abstract void backwardPass(Tensor input, Tensor expectation);
+    public abstract Tensor forwardPass(Tensor input) throws DimensionMismatchException;
+    public abstract void backwardPass(Tensor input, Tensor expectation) throws DimensionMismatchException;
     
-    public float calculateLoss(Tensor input, Tensor expectation) {
+    public float calculateLoss(Tensor input, Tensor expectation) throws DimensionMismatchException {
         return loss.apply(forwardPass(input), expectation);
     }
     
-    public void learn(Optimizer optimizer) {
+    public void learn(Optimizer optimizer) throws DimensionMismatchException {
         
         optimizer.prepareLearningStep(gradient);
         
@@ -37,11 +38,11 @@ public abstract class Network {
             layer.learn(gradient);
         }
         
-        gradient.multiplyScalar(0);
+        gradient = new Vector(gradient.getSize());
     
     }
     
-    public void trainOnBatch(Tensor[] inputs, Tensor[] expectations, Optimizer optimizer) {
+    public void trainOnBatch(Tensor[] inputs, Tensor[] expectations, Optimizer optimizer) throws DimensionMismatchException {
         
         if (inputs.length != expectations.length || optimizer.getBatchSize() != inputs.length) {
             throw new IllegalArgumentException("Batch size mismatch");
@@ -81,7 +82,7 @@ public abstract class Network {
         
     }
     
-    public float estimateGradient(int parameterIndex, float valueChange, Tensor input, Tensor expectation) {
+    public float estimateGradient(int parameterIndex, float valueChange, Tensor input, Tensor expectation) throws DimensionMismatchException {
         
         float lossBefore = calculateLoss(input, expectation);
         

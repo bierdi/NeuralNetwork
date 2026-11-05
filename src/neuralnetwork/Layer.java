@@ -1,6 +1,7 @@
 package neuralnetwork;
 
 import activationfunctions.ActivationFunction;
+import exceptions.DimensionMismatchException;
 import tensors.Tensor;
 import tensors.Vector;
 
@@ -20,9 +21,9 @@ public abstract class Layer {
     
     protected ActivationFunction activator;
     
-    public abstract Tensor forwardPass(Tensor input);
-    public abstract Tensor backwardPass(Tensor gradient, Vector globalGradient);
-    public abstract void learn(Vector globalGradient);
+    public abstract Tensor forwardPass(Tensor input) throws DimensionMismatchException;
+    public abstract Tensor backwardPass(Tensor gradient, Vector globalGradient) throws DimensionMismatchException;
+    public abstract void learn(Vector globalGradient) throws DimensionMismatchException;
     
     public abstract int[] getInputDimensions();
     public abstract int[] getOutputDimensions();
@@ -31,7 +32,7 @@ public abstract class Layer {
     public abstract float getParameterAt(int parameterIndex);
     public abstract void setParameterAt(int parameterIndex, float valueChange);
     
-    public abstract Layer deepCopy();
+    public abstract Layer deepCopy() throws DimensionMismatchException;
     
     public String getActivationFunctionName() {
         return activator.getClass().getCanonicalName();
