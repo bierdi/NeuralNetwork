@@ -19,7 +19,7 @@ Ein MLP und ein CNN von Grund auf in Java implementiert. Aktuell steht eine Demo
 
 ## Demo
 
-`TestApp` trainiert ein MLP (1 → 30 → 30 → 30 → 1, ReLU) auf eine Sinus Funktion im Intervall [0;10] (gestaucht auf [-1;1])
+`TestApp` trainiert ein MLP (1 → 30 → 30 → 30 → 1, ReLU) auf eine Sinus Funktion im Intervall [-1;1]
 
 Zufallsgenerator ist nicht geseedet.
 
