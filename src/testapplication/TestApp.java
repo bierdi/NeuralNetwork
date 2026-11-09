@@ -6,7 +6,9 @@ import activationfunctions.ReLU;
 import exceptions.DimensionMismatchException;
 import initfunctions.HeInit;
 import initfunctions.InitFunction;
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import lossfunctions.SquaredDeviation;
 import neuralnetwork.mlp.MLP;
 import optimizers.GradientDescentMomentum;
@@ -19,37 +21,24 @@ import tensors.Vector;
  */
 public class TestApp {
     
-    public static void main(String[] args) throws FileNotFoundException, DimensionMismatchException {
+    public static void main(String[] args) throws FileNotFoundException, DimensionMismatchException, IOException {
         
-        /*
-        MLP mlp = new MLP(new MLPLayer[] {new MLPLayer(new Matrix(new float[][] {{1},{2},{3}}), new Vector(new float[] {1,2,3}), new ReLU()), 
-            new MLPLayer(new Matrix(new float[][] {{1,2,3}}), new Vector(new float[] {3}), new ReLU())}, 
-            new SquaredDeviation());
-        Vector result = mlp.forwardPass(new Vector(new float[] {2}));
-        
-        System.out.println(result);
-        */
-        /*
-        double learningRate;
-        double startingLearningRate = 1;
-        double learningRateDecay = 0.05;
-        
-        for (int i = 0; i < 10000; i++) {
-            learningRate = startingLearningRate * (1 / (1 + learningRateDecay * i));
-            System.out.println(learningRate);
-        }
-        */
-        
+        //Gradienten Abstieg mit Trägheitsmomentum, Parameter: Lernrate, Batchgröße, Momentum Hyperparameter, Decay Rate für Learning Rate, Schrittzahl ab der Decay nicht mehr greift
         Optimizer gradientDescent = new GradientDescentMomentum(0.005f, 1, 0.9f, 0.0001f, 45000);
         
+        // Sinusfunktion zum Label generieren
         Function sine = (float f) -> (float) Math.sin(f * 10);
         
+        //Seed für Initialisierung der Gewichte mit HeInit
         int seed = 1234;
         
-        MLP sineMLP = new MLP(new int[] {30, 30, 30, 1}, 1, new ActivationFunction[] {new ReLU(), new ReLU(), new ReLU(), new Identity()}, new InitFunction[] {new HeInit(seed), new HeInit(seed), new HeInit(seed), new HeInit(seed)}, new SquaredDeviation());
+        //MLP mit 4 Schichten (30,30,30,1), Aktivierungen (ReLU, ReLU, ReLU, Identity), Lambda für L2 Regularisierung bei 0, Dropout Rate bei 0 für alle Layer
+        MLP sineMLP = new MLP(new int[] {30, 30, 30, 1}, 1, new ActivationFunction[] {new ReLU(), new ReLU(), new ReLU(), new Identity()}, new InitFunction[] {new HeInit(seed), new HeInit(seed), new HeInit(seed), new HeInit(seed)}, new SquaredDeviation(), 0.0f, new float[] {0.0f,0.0f,0.0f,0.0f});
         
+        //50000 Lernschritte
         int learningSteps = 50000;
         
+        //Trainingsschleife
         for (int i = 0; i < learningSteps; i++) {
             float f = (float) Math.random() * 2 - 1;
             try {
@@ -61,20 +50,24 @@ public class TestApp {
         }
 
         try {
-            if (Math.abs(sine.apply(0.6f) - sineMLP.forwardPass(new Vector(new float[] {0.6f})).getValue(0)) < 0.01f) {
-                System.out.println(sine.apply(0.0f));
-                System.out.println(sineMLP.forwardPass(new Vector(new float[] {0.0f})));
-                System.out.println(sine.apply(0.2f));
-                System.out.println(sineMLP.forwardPass(new Vector(new float[] {0.2f})));
-                System.out.println(sine.apply(0.4f));
-                System.out.println(sineMLP.forwardPass(new Vector(new float[] {0.4f})));
-                System.out.println(sine.apply(0.6f));
-                System.out.println(sineMLP.forwardPass(new Vector(new float[] {0.6f})));
-                System.out.println(sine.apply(0.8f));
-                System.out.println(sineMLP.forwardPass(new Vector(new float[] {0.8f})));
-            } else {
-                System.out.println("Failure");             
-            }
+            System.out.println("Expected for x=-0.8: " + sine.apply(-0.8f));
+            System.out.println("Prediction for x=-0.8: " + sineMLP.forwardPass(new Vector(new float[] {-0.8f})));
+            System.out.println("Expected for x=-0.6: " + sine.apply(-0.6f));
+            System.out.println("Prediction for x=-0.6: " + sineMLP.forwardPass(new Vector(new float[] {-0.6f})));
+            System.out.println("Expected for x=-0.4: " + sine.apply(-0.4f));
+            System.out.println("Prediction for x=-0.4: " + sineMLP.forwardPass(new Vector(new float[] {-0.4f})));
+            System.out.println("Expected for x=-0.2: " + sine.apply(-0.2f));
+            System.out.println("Prediction for x=-0.2: " + sineMLP.forwardPass(new Vector(new float[] {-0.2f})));
+            System.out.println("Expected for x=0: " + sine.apply(0.0f));
+            System.out.println("Prediction for x=0: " + sineMLP.forwardPass(new Vector(new float[] {0.0f})));
+            System.out.println("Expected for x=0.2: " + sine.apply(0.2f));
+            System.out.println("Prediction for x=0.2: " + sineMLP.forwardPass(new Vector(new float[] {0.2f})));
+            System.out.println("Expected for x=0.4: " + sine.apply(0.4f));
+            System.out.println("Prediction for x=0.4: " + sineMLP.forwardPass(new Vector(new float[] {0.4f})));
+            System.out.println("Expected for x=0.6: " + sine.apply(0.6f));
+            System.out.println("Prediction for x=0.6: " + sineMLP.forwardPass(new Vector(new float[] {0.6f})));
+            System.out.println("Expected for x=0.8: " + sine.apply(0.8f));
+            System.out.println("Prediction for x=0.8: " + sineMLP.forwardPass(new Vector(new float[] {0.8f})));
         } catch (DimensionMismatchException ex) {
             System.out.println(ex.getMessage());
         }

@@ -3,6 +3,7 @@ package neuralnetwork.mlp;
 import activationfunctions.ActivationFunction;
 import exceptions.DimensionMismatchException;
 import initfunctions.InitFunction;
+import java.util.Scanner;
 import neuralnetwork.Layer;
 import tensors.Matrix;
 import tensors.Tensor;
@@ -53,7 +54,7 @@ public class MLPLayer extends Layer {
     }
     
     @Override
-    public Vector forwardPass(Tensor input) throws DimensionMismatchException {
+    public Vector forwardPass(Tensor input, boolean dropoutActive) throws DimensionMismatchException {
         
         inputCache = input;
         Tensor tmpResult = Vector.addVectors(Matrix.multiplyMatrixVector(Matrix.tensorToMatrix(weights), Vector.tensorToVector(input)), Vector.tensorToVector(biases));
@@ -73,11 +74,9 @@ public class MLPLayer extends Layer {
         
         Matrix weightDerivatives = Matrix.createFromVectors(Vector.tensorToVector(inputCache), Vector.tensorToVector(gradient));
         
-        //Matrix weightGradient = new Matrix(weights.getWidth(), weights.getHeight(), globalGradient, gradientIndex, gradientIndex + weights.getSize());
         Matrix weightGradient = Matrix.tensorToMatrix(Tensor.createView(weights.getDimensions(), globalGradient, new int[] {1,1}, new int[] {gradientIndex}));
         weightGradient.addMatrix(weightDerivatives);
         
-        //Vector biasGradient = new Vector(biases.getSize(), globalGradient, gradientIndex + weights.getSize(), gradientIndex + weights.getSize() + biases.getSize());
         Vector biasGradient = Vector.tensorToVector(Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()}));
         biasGradient.addVector(Vector.tensorToVector(gradient));
         
@@ -87,8 +86,6 @@ public class MLPLayer extends Layer {
     @Override
     public void learn(Vector globalGradient) throws DimensionMismatchException {
         
-        //Matrix weightGradient = new Matrix(weights.getWidth(), weights.getHeight(), globalGradient, gradientIndex, gradientIndex + weights.getSize());
-        //Vector biasGradient = new Vector(biases.getSize(), globalGradient, gradientIndex + weights.getSize(), gradientIndex + weights.getSize() + biases.getSize());
         Matrix weightGradient = Matrix.tensorToMatrix(Tensor.createView(weights.getDimensions(), globalGradient, new int[] {1,1}, new int[] {gradientIndex}));
         Vector biasGradient = Vector.tensorToVector(Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()}));
         
@@ -145,6 +142,31 @@ public class MLPLayer extends Layer {
     @Override
     public MLPLayer deepCopy() throws DimensionMismatchException {
         return new MLPLayer(Matrix.tensorToMatrix(weights), Vector.tensorToVector(biases), activator);
+    }
+
+    @Override
+    public void appendToStringBuilder(StringBuilder sb) {
+        
+        sb.append(this.getLayerName());
+        sb.append("\n");
+        sb.append(this.getActivationFunctionName());
+        sb.append("\n");
+        Matrix w = Matrix.tensorToMatrix(weights);
+        sb.append(w.getWidth());
+        sb.append("\n");
+        sb.append(w.getHeight());
+        sb.append("\n");
+
+        for (int j = 0; j < this.getNumberOfParameters(); j++) {
+            sb.append(this.getParameterAt(j));
+            sb.append(" ");
+        }
+            
+    }
+
+    @Override
+    protected void buildFromFile(Scanner scanner) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

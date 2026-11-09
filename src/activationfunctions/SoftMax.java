@@ -18,13 +18,11 @@ public class SoftMax extends ActivationFunction {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    protected float applyScalar(float f) {
+    private float applyScalar(float f) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    @Override
-    protected float derivativeScalar(float f) {
+    private float derivativeScalar(float f) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     

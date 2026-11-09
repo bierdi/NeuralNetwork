@@ -23,6 +23,10 @@ public abstract class Network {
     
     protected int totalNumberParams;
     
+    protected float lambda;
+    
+    protected boolean dropoutActive = false;
+    
     public abstract Tensor forwardPass(Tensor input) throws DimensionMismatchException;
     public abstract void backwardPass(Tensor input, Tensor expectation) throws DimensionMismatchException;
     
@@ -105,6 +109,10 @@ public abstract class Network {
         return layers[layers.length - 1].getOutputDimensions();
     }
     
-    public abstract void saveToFile(File file) throws IOException;    
+    public abstract void saveToFile(File file) throws IOException;  
+    
+    public void toggleDropout(boolean dropoutActive) {
+        this.dropoutActive = dropoutActive;
+    }
     
 }

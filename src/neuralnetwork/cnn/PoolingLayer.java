@@ -1,5 +1,6 @@
 package neuralnetwork.cnn;
 
+import java.util.Scanner;
 import neuralnetwork.Layer;
 import tensors.Tensor;
 import tensors.Vector;
@@ -11,7 +12,7 @@ import tensors.Vector;
 public class PoolingLayer extends Layer {
 
     @Override
-    public Tensor forwardPass(Tensor input) {
+    public Tensor forwardPass(Tensor input, boolean dropoutActive) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
@@ -52,6 +53,16 @@ public class PoolingLayer extends Layer {
 
     @Override
     public Layer deepCopy() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void appendToStringBuilder(StringBuilder sb) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    protected void buildFromFile(Scanner scanner) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

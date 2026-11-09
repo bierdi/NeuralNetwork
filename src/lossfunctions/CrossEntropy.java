@@ -6,7 +6,7 @@ import tensors.Tensor;
  *
  * @author bierdi
  */
-public class CrossEntropy implements LossFunction {
+public class CrossEntropy extends LossFunction {
 
     @Override
     public float apply(Tensor result, Tensor expectation) {

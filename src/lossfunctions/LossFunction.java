@@ -6,9 +6,13 @@ import tensors.Tensor;
  *
  * @author bierdi
  */
-public interface LossFunction {
+public abstract class LossFunction {
     
-    public float apply(Tensor result, Tensor expectation);
-    public Tensor derivative(Tensor result, Tensor expectation);
+    public abstract float apply(Tensor result, Tensor expectation);
+    public abstract Tensor derivative(Tensor result, Tensor expectation);
+    
+    public String getLossFunctionName() {
+        return this.getClass().getSimpleName();
+    }
     
 }

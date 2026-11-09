@@ -7,7 +7,7 @@ import tensors.Vector;
  *
  * @author bierdi
  */
-public class SquaredDeviation implements LossFunction {
+public class SquaredDeviation extends LossFunction {
 
     @Override
     public float apply(Tensor result, Tensor expectation) {

@@ -74,6 +74,22 @@ public class Vector extends Tensor {
         return result;
     }
     
+    public void multiplyVectorValues(Vector v) throws DimensionMismatchException {
+        
+        if (v == null) {
+            throw new IllegalArgumentException("No null parameters allowed");
+        }
+        
+        if (v.getSize() != this.getSize()) {
+            throw new DimensionMismatchException("Dimensions do not fit");
+        }
+        
+        for (int i = 0; i < v.getSize(); i++) {
+            this.setValueUnchecked(v.getValueUnchecked(i) * this.getValueUnchecked(i), i);
+        }
+        
+    }
+    
     @Override
     public void multiplyScalar(float f) {
         

@@ -21,13 +21,11 @@ public class Identity extends ActivationFunction {
         return t;
     }
 
-    @Override
-    protected float applyScalar(float f) {
+    private float applyScalar(float f) {
         return f;
     }
 
-    @Override
-    protected float derivativeScalar(float f) {
+    private float derivativeScalar(float f) {
         return 1;
     }
     
