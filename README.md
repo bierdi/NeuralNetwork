@@ -49,7 +49,7 @@ Prediction for x=0.8: [0.9841894]
 
 ## Ausführen
 
-Braucht mindestens Java 11
+Braucht mindestens Java 26
 
 ```bash
 java -jar NeuralNetwork.jar
