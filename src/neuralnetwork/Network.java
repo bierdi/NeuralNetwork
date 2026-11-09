@@ -31,7 +31,16 @@ public abstract class Network {
     public abstract void backwardPass(Tensor input, Tensor expectation) throws DimensionMismatchException;
     
     public float calculateLoss(Tensor input, Tensor expectation) throws DimensionMismatchException {
-        return loss.apply(forwardPass(input), expectation);
+        
+        float sum = 0.0f;
+        
+        for (int i = 0; i < this.getNumberOfParameters(); i++) {
+            sum += this.getParameterAt(i) * this.getParameterAt(i);
+        }
+        
+        sum *= this.lambda;
+        
+        return loss.apply(forwardPass(input), expectation) + sum;
     }
     
     public void learn(Optimizer optimizer) throws DimensionMismatchException {

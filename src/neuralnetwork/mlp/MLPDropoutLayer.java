@@ -29,14 +29,13 @@ public class MLPDropoutLayer extends Layer {
         this.dropoutRate = dropoutRate;
         this.inputSize = inputSize;
         
-        this.dropoutCache = new Vector(this.inputSize);
-        
     }
     
     @Override
     public Tensor forwardPass(Tensor input, boolean dropoutActive) throws DimensionMismatchException {
         
         Vector result = Vector.tensorToVector(input);
+        this.dropoutCache = new Vector(this.inputSize);
         
         if (dropoutActive) {
             for (int i = 0; i < result.getSize(); i++) {
@@ -44,7 +43,8 @@ public class MLPDropoutLayer extends Layer {
                 if (rand < dropoutRate) {
                     result.setValue(0, i);
                 } else {
-                    this.dropoutCache.setValue(1, i);
+                    this.dropoutCache.setValue(1 / (1 - this.dropoutRate), i);
+                    result.setValue(result.getValue(i) * 1 / (1 - this.dropoutRate), i);
                 }
             }
         } else {

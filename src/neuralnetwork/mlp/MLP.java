@@ -118,7 +118,7 @@ public class MLP extends Network {
         int gradientIndex = 0;
         gradientLayerMapping = new int[totalNumberParams];
         gradient = new Vector(totalNumberParams);
-        this.layers = new MLPLayer[layers.length];
+        this.layers = new Layer[layers.length];
         
         for (int i = 0; i < layers.length; i++) {
             
