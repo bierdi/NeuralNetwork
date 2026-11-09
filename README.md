@@ -26,7 +26,24 @@ Zufallsgenerator ist nicht geseedet.
 ```
 Beispielausgabe:
 
-
+Expected for x=-0.8: -0.98935825
+Prediction for x=-0.8: [-0.9705397]
+Expected for x=-0.6: 0.2794155
+Prediction for x=-0.6: [0.2615771]
+Expected for x=-0.4: 0.7568025
+Prediction for x=-0.4: [0.76563525]
+Expected for x=-0.2: -0.9092974
+Prediction for x=-0.2: [-0.9115073]
+Expected for x=0: 0.0
+Prediction for x=0: [0.0018287897]
+Expected for x=0.2: 0.9092974
+Prediction for x=0.2: [0.9104122]
+Expected for x=0.4: -0.7568025
+Prediction for x=0.4: [-0.7623644]
+Expected for x=0.6: -0.2794155
+Prediction for x=0.6: [-0.27798286]
+Expected for x=0.8: 0.98935825
+Prediction for x=0.8: [0.9841894]
 
 ```
 
