@@ -6,16 +6,16 @@ Ein MLP und ein CNN von Grund auf in Java implementiert. Aktuell steht eine Demo
 
 | Funktion | Status |
 |---|---|
-| Tensoren (Vektoren, Matrizen, Views auf Tensoren) | ✅ Fertig |
-| Multilayer perceptron (MLP) | ✅ Fertig |
-| Backpropagation | ✅ Fertig |
-| Aktivierungsfunktionen: ReLU, Identity, Sigmoid | ✅ Fertig |
-| Loss: Quadratische Abweichung | ✅ Fertig |
-| Optimizers: Gradientenabstieg mit Momentum und Learning Rate Decay | ✅ Fertig |
-| Initialisierung: Gleichverteilung, Xavier, HeInit | ✅ Fertig |
-| Softmax + cross-entropy | ⚙️ in Arbeit |
-| Convolutional neural network (CNN) | ⚙️ in Arbeit |
-| GUI: Ziffern zeichnen und klassifizieren | ⚙️ in Arbeit |
+| Tensoren (Vektoren, Matrizen, Views auf Tensoren) | Fertig |
+| Multilayer perceptron (MLP) | Fertig |
+| Backpropagation | Fertig |
+| Aktivierungsfunktionen: ReLU, Identity, Sigmoid | Fertig |
+| Loss: Quadratische Abweichung | Fertig |
+| Optimizers: Gradientenabstieg mit Momentum und Learning Rate Decay | Fertig |
+| Initialisierung: Gleichverteilung, Xavier, HeInit | Fertig |
+| Softmax + cross-entropy | in Arbeit |
+| Convolutional neural network (CNN) | in Arbeit |
+| GUI: Ziffern zeichnen und klassifizieren | in Arbeit |
 
 ## Demo
 
