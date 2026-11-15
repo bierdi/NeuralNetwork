@@ -13,7 +13,7 @@ Ein MLP und ein CNN von Grund auf in Java implementiert. Aktuell steht eine Demo
 | Loss: Quadratische Abweichung | Fertig |
 | Optimizers: Gradientenabstieg mit Momentum und Learning Rate Decay | Fertig |
 | Initialisierung: Gleichverteilung, Xavier, HeInit | Fertig |
-| Softmax + cross-entropy | in Arbeit |
+| Softmax + cross-entropy | Fertig |
 | Convolutional neural network (CNN) | in Arbeit |
 | GUI: Ziffern zeichnen und klassifizieren | in Arbeit |
 
