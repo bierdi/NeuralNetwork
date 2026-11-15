@@ -143,36 +143,30 @@ public class MLP extends Network {
         Scanner scanner = new Scanner(source);
         
         int numLayers = scanner.nextInt();
+        
+        if(numLayers <= 0) {
+            throw new IllegalArgumentException("Network must have at least one layer");
+        }
+        
         Layer[] tmpLayers = new Layer[numLayers];
         
-        String lossFunction = scanner.nextLine();
+        String lossFunction = scanner.next();
         
         Class<?> c = Class.forName(lossFunction);
-        LossFunction tmpLoss = (LossFunction) c.getConstructor((Class<?>) null).newInstance();
+        LossFunction tmpLoss = (LossFunction) c.getConstructors()[0].newInstance();
         
-        float lambda = scanner.nextFloat();
+        float tmpLambda = Float.parseFloat(scanner.next());
         
         for (int i = 0; i < numLayers; i++) {
             
-            //MLPLayer l = new MLPLayer(scanner);
-            
-            /*
-            String layerType = scanner.nextLine();
-            String activationFunction = scanner.nextLine();
-            
-            int width = scanner.nextInt();
-            int height = scanner.nextInt();
-            
-            Matrix tmpWeights = new Matrix(width, height);
-            Vector tmpBiases = new Vector(height);
+            String layerType = scanner.next();
             
             c = Class.forName(layerType);
-            Layer tmpLayer = (Layer) c.getConstructor((Class<?>) null).newInstance();
-            */
+            tmpLayers[i] = (Layer) c.getConstructor(scanner.getClass()).newInstance(scanner);
 
         }
         
-        buildFromLayers(tmpLayers, tmpLoss, lambda);
+        buildFromLayers(tmpLayers, tmpLoss, tmpLambda);
         
     }
 
@@ -227,10 +221,10 @@ public class MLP extends Network {
             layer.appendToStringBuilder(sb);
         }
         
-        Writer writer = new FileWriter(file);
-        writer.write(sb.toString());
-        writer.flush();
-        writer.close();
+        try (Writer writer = new FileWriter(file)) {
+            writer.write(sb.toString());
+            writer.flush();
+        }
         
     }
     

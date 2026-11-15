@@ -9,6 +9,6 @@ import tensors.Tensor;
 public abstract class ActivationFunction {
     
     public abstract Tensor apply(Tensor t);
-    public abstract Tensor derivative(Tensor t);
+    public abstract void derivative(Tensor t, Tensor gradient);
     
 }

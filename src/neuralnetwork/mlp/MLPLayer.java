@@ -3,6 +3,7 @@ package neuralnetwork.mlp;
 import activationfunctions.ActivationFunction;
 import exceptions.DimensionMismatchException;
 import initfunctions.InitFunction;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 import neuralnetwork.Layer;
 import tensors.Matrix;
@@ -14,6 +15,28 @@ import tensors.Vector;
  * @author bierdi
  */
 public class MLPLayer extends Layer {
+    
+    public MLPLayer(Scanner scanner) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        
+        String activationFunction = scanner.next();
+        Class<?> c = Class.forName(activationFunction);
+        this.activator = (ActivationFunction) c.getConstructors()[0].newInstance();
+        
+        int weightsWidth = scanner.nextInt();
+        int weightsHeight = scanner.nextInt();
+        
+        this.weights = new Matrix(weightsWidth, weightsHeight);
+        this.biases = new Vector(weightsHeight);
+        
+        for (int i = 0; i < weightsWidth * weightsHeight; i++) {
+            this.weights.setValueFlat(Float.parseFloat(scanner.next()), i);
+        }
+        
+        for (int i = 0; i < weightsHeight; i++) {
+            this.biases.setValueFlat(Float.parseFloat(scanner.next()), i);
+        }
+        
+    }
     
     public MLPLayer(Matrix weights, Vector biases, ActivationFunction activator) throws DimensionMismatchException {
         
@@ -69,8 +92,7 @@ public class MLPLayer extends Layer {
         
         Tensor tmpResultCacheCopy = tmpResultCache.deepCopy();
         
-        activator.derivative(tmpResultCacheCopy);
-        gradient.multiplyTensorValues(tmpResultCacheCopy);
+        activator.derivative(tmpResultCacheCopy, gradient);
         
         Matrix weightDerivatives = Matrix.createFromVectors(Vector.tensorToVector(inputCache), Vector.tensorToVector(gradient));
         
@@ -162,11 +184,6 @@ public class MLPLayer extends Layer {
             sb.append(" ");
         }
             
-    }
-
-    @Override
-    protected void buildFromFile(Scanner scanner) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

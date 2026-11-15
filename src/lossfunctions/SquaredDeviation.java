@@ -1,5 +1,6 @@
 package lossfunctions;
 
+import exceptions.DimensionMismatchException;
 import tensors.Tensor;
 import tensors.Vector;
 
@@ -10,7 +11,7 @@ import tensors.Vector;
 public class SquaredDeviation extends LossFunction {
 
     @Override
-    public float apply(Tensor result, Tensor expectation) {
+    public float apply(Tensor result, Tensor expectation) throws DimensionMismatchException {
         
         checkInputs(result, expectation);
         
@@ -24,7 +25,7 @@ public class SquaredDeviation extends LossFunction {
     }
 
     @Override
-    public Tensor derivative(Tensor result, Tensor expectation) {
+    public Tensor derivative(Tensor result, Tensor expectation) throws DimensionMismatchException {
         
         checkInputs(result, expectation);
         
@@ -37,16 +38,6 @@ public class SquaredDeviation extends LossFunction {
         }
         
         return derivative;
-    }
-    
-    private void checkInputs(Tensor result, Tensor expectation) {
-        if (result == null || expectation == null) {
-            throw new IllegalArgumentException("No null parameters allowed");
-        }
-        
-        if (result.getSize() != expectation.getSize()) {
-            throw new IllegalArgumentException("Dimensions do not fit");
-        }
     }
     
 }

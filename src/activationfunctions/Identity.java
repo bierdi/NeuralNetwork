@@ -14,19 +14,10 @@ public class Identity extends ActivationFunction {
     }
 
     @Override
-    public Tensor derivative(Tensor t) {
+    public void derivative(Tensor t, Tensor gradient) {
         for (int i = 0; i < t.getSize(); i++) {
             t.setValueFlat(1, i);
         }
-        return t;
-    }
-
-    private float applyScalar(float f) {
-        return f;
-    }
-
-    private float derivativeScalar(float f) {
-        return 1;
     }
     
 }

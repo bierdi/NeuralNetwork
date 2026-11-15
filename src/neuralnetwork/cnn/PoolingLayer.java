@@ -11,6 +11,10 @@ import tensors.Vector;
  */
 public class PoolingLayer extends Layer {
 
+    public PoolingLayer(Scanner scanner) {
+        
+    }
+    
     @Override
     public Tensor forwardPass(Tensor input, boolean dropoutActive) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -58,11 +62,6 @@ public class PoolingLayer extends Layer {
 
     @Override
     public void appendToStringBuilder(StringBuilder sb) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    protected void buildFromFile(Scanner scanner) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

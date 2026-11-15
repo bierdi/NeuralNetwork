@@ -19,6 +19,19 @@ public class MLPDropoutLayer extends Layer {
     private final Random r;
     Vector dropoutCache;
     
+    public MLPDropoutLayer(Scanner scanner) {
+        
+        this.dropoutRate = Float.parseFloat(scanner.next());
+        this.inputSize = scanner.nextInt();
+        
+        if (this.inputSize < 1) {
+            throw new IllegalArgumentException("Input size must be at least of size 1");
+        }
+        
+        this.r = new Random();
+        
+    }
+    
     public MLPDropoutLayer(float dropoutRate, int inputSize) {
         
         if (inputSize < 1) {
@@ -104,11 +117,6 @@ public class MLPDropoutLayer extends Layer {
         sb.append("\n");
         sb.append(this.inputSize);   
         
-    }
-
-    @Override
-    protected void buildFromFile(Scanner scanner) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

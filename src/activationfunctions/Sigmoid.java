@@ -19,13 +19,13 @@ public class Sigmoid extends ActivationFunction {
     }
 
     @Override
-    public Tensor derivative(Tensor t) {
+    public void derivative(Tensor t, Tensor gradient) {
         
         for (int i = 0; i < t.getSize(); i++) {
             t.setValueFlat(derivativeScalar(t.getValueFlat(i)), i);
         }
         
-        return t;
+        gradient.multiplyTensorValues(t);
     }
 
     private float applyScalar(float f) {
