@@ -193,10 +193,14 @@ public class MLP extends Network {
     @Override
     public void backwardPass(Tensor input, Tensor expectation) throws DimensionMismatchException {
 
-        for (int i = 0; i < this.getNumberOfParameters(); i++) {
-            this.gradient.setValue(this.gradient.getValue(i) + this.getParameterAt(i) * 2 * lambda, i);
+        if (this.lambda != 0.0f) {
+
+            for (int i = 0; i < this.getNumberOfParameters(); i++) {
+                this.gradient.setValue(this.gradient.getValue(i) + this.getParameterAt(i) * 2 * lambda, i);
+            }
+            
         }
-        
+
         Tensor lossDerivative = loss.derivative(forwardPass(input), expectation);
         
         for (int i = layers.length - 1; i >= 0; i--) {

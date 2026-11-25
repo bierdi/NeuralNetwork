@@ -102,7 +102,7 @@ public class MLPLayer extends Layer {
         Vector biasGradient = Vector.tensorToVector(Tensor.createView(biases.getDimensions(), globalGradient, new int[] {1}, new int[] {gradientIndex + weights.getSize()}));
         biasGradient.addVector(Vector.tensorToVector(gradient));
         
-        return Matrix.multiplyMatrixVector(Matrix.transposeMatrix(Matrix.tensorToMatrix(weights)), Vector.tensorToVector(gradient));
+        return Matrix.multiplyTransposedMatrixVector(Matrix.tensorToMatrix(weights), Vector.tensorToVector(gradient));
     }
 
     @Override

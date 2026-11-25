@@ -49,8 +49,21 @@ public class Vector extends Tensor {
             throw new DimensionMismatchException("Dimensions do not fit");
         }
         
+        if (this.offsets[0] == 1 && v.offsets[0] == 1) {
+            addVectorOptimized(v);
+            return;
+        }
+        
         for (int i = 0; i < this.getSize(); i++) {
             this.setValueUnchecked(this.getValueUnchecked(i) + v.getValueUnchecked(i), i);
+        }
+        
+    }
+    
+    private void addVectorOptimized(Vector v) {
+        
+        for (int i = 0; i < this.getSize(); i++) {
+            this.values[this.startIndex + i] += v.values[v.startIndex + i];
         }
         
     }
@@ -93,8 +106,21 @@ public class Vector extends Tensor {
     @Override
     public void multiplyScalar(float f) {
         
+        if (this.offsets[0] == 1) {
+            multiplyScalarOptimized(f);
+            return;
+        }
+        
         for (int i = 0; i < this.getSize(); i++) {
             this.setValueUnchecked(this.getValueUnchecked(i) * f, i);
+        }
+        
+    }
+    
+    private void multiplyScalarOptimized(float f) {
+        
+        for (int i = 0; i < this.getSize(); i++) {
+            this.values[this.startIndex + i] *= f;
         }
         
     }

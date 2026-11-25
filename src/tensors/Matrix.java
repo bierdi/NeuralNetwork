@@ -115,6 +115,29 @@ public class Matrix extends Tensor {
 
         return result;
     }
+    
+    public static Vector multiplyTransposedMatrixVector(Matrix m, Vector v) {
+        
+        if (m == null || v == null) {
+            throw new IllegalArgumentException("No null parameters allowed");
+        }
+
+        if (m.getHeight() != v.getSize()) {
+            throw new IllegalArgumentException("Dimensions do not fit");
+        }
+        
+        Vector result = new Vector(m.getWidth());
+        
+        for (int i = 0; i < m.getWidth(); i++) {
+            float sum = 0.0f;
+            for (int j = 0; j < v.getSize(); j++) {
+                sum += m.getValue(i, j) * v.getValue(j);
+            }
+            result.setValue(sum, i);
+        }
+        
+        return result;
+    }
 
     public static Matrix multiplyMatrices(Matrix m0, Matrix m1) {
 
@@ -151,10 +174,23 @@ public class Matrix extends Tensor {
             throw new DimensionMismatchException("Dimensions do not fit");
         }
         
+        if (m.offsets[0] == 1 && m.offsets[1] == m.getWidth() && this.offsets[0] == 1 && this.offsets[1] == this.getWidth()) {
+            addMatrixOptimized(m);
+            return;
+        }
+        
         for (int i = 0; i < m.getWidth(); i++) {
             for (int j = 0; j < m.getHeight(); j++) {
                 this.setValueUnchecked(this.getValueUnchecked(i, j) + m.getValueUnchecked(i, j), i, j);
             }
+        }
+        
+    }
+    
+    private void addMatrixOptimized(Matrix m) {
+        
+        for (int i = 0; i < this.getSize(); i++) {
+            this.values[this.startIndex + i] += m.values[m.startIndex + i];
         }
         
     }
@@ -185,7 +221,7 @@ public class Matrix extends Tensor {
         if (v0 == null || v1 == null) {
             throw new IllegalArgumentException("No null parameters allowed");
         }
-
+        
         Matrix result = new Matrix(v0.getSize(), v1.getSize());
 
         for (int i = 0; i < result.getHeight(); i++) {

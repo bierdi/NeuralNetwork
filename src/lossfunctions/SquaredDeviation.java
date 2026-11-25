@@ -15,7 +15,7 @@ public class SquaredDeviation extends LossFunction {
         
         checkInputs(result, expectation);
         
-        float sum = 0;
+        float sum = 0.0f;
         
         for (int i = 0; i < result.getSize(); i++) {
             sum += Math.pow(expectation.getValueFlat(i) - result.getValueFlat(i), 2) / 2;

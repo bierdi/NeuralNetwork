@@ -34,11 +34,15 @@ public abstract class Network {
         
         float sum = 0.0f;
         
-        for (int i = 0; i < this.getNumberOfParameters(); i++) {
-            sum += this.getParameterAt(i) * this.getParameterAt(i);
-        }
+        if (this.lambda != 0.0f) {
         
-        sum *= this.lambda;
+            for (int i = 0; i < this.getNumberOfParameters(); i++) {
+                sum += this.getParameterAt(i) * this.getParameterAt(i);
+            }
+
+            sum *= this.lambda;
+            
+        }
         
         return loss.apply(forwardPass(input), expectation) + sum;
     }

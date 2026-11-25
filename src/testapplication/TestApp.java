@@ -1,19 +1,23 @@
 package testapplication;
 
 import activationfunctions.ActivationFunction;
-import activationfunctions.Identity;
 import activationfunctions.ReLU;
+import activationfunctions.SoftMax;
 import exceptions.DimensionMismatchException;
 import initfunctions.HeInit;
 import initfunctions.InitFunction;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import lossfunctions.SquaredDeviation;
+import java.io.FileNotFoundException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+import lossfunctions.CrossEntropy;
 import neuralnetwork.mlp.MLP;
 import optimizers.GradientDescentMomentum;
 import optimizers.Optimizer;
 import tensors.Vector;
+import testapplication.mnist.LabelImagePair;
+import testapplication.mnist.MNISTLoader;
 
 /**
  *
@@ -21,57 +25,81 @@ import tensors.Vector;
  */
 public class TestApp {
     
-    public static void main(String[] args) throws FileNotFoundException, DimensionMismatchException, IOException {
+    public static void main(String[] args) throws DimensionMismatchException, FileNotFoundException, IOException, ClassNotFoundException, NoSuchMethodException, InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         
-        //Gradienten Abstieg mit Trägheitsmomentum, Parameter: Lernrate, Batchgröße, Momentum Hyperparameter, Decay Rate für Learning Rate, Schrittzahl ab der Decay nicht mehr greift
-        Optimizer gradientDescent = new GradientDescentMomentum(0.005f, 1, 0.9f, 0.0001f, 45000);
+        Optimizer optimizer = new GradientDescentMomentum(0.0008f, 1, 0.9f, 0.0f, 0);
         
-        // Sinusfunktion zum Label generieren
-        Function sine = (float f) -> (float) Math.sin(f * 10);
+        MLP digitClassifier = new MLP(
+            new int[] {784, 784, 10},
+            784,
+            new ActivationFunction[] {new ReLU(), new ReLU(), new SoftMax()},
+            new InitFunction[] {new HeInit(0), new HeInit(1), new HeInit(2)},
+            new CrossEntropy(),
+            0.0f,
+            new float[] {0.0f, 0.0f, 0.0f});
         
-        //Seed für Initialisierung der Gewichte mit HeInit
-        int seed = 1234;
+        List<LabelImagePair> trainingData = MNISTLoader.getData(new File("data/training/mnist_train.csv"));
+        System.out.println("Loaded training data");
         
-        //MLP mit 4 Schichten (30,30,30,1), Aktivierungen (ReLU, ReLU, ReLU, Identity), Lambda für L2 Regularisierung bei 0, Dropout Rate bei 0 für alle Layer
-        MLP sineMLP = new MLP(new int[] {30, 30, 30, 1}, 1, new ActivationFunction[] {new ReLU(), new ReLU(), new ReLU(), new Identity()}, new InitFunction[] {new HeInit(seed), new HeInit(seed), new HeInit(seed), new HeInit(seed)}, new SquaredDeviation(), 0.0f, new float[] {0.0f,0.0f,0.0f,0.0f});
+        int count = 0;
         
-        //50000 Lernschritte
-        int learningSteps = 50000;
+        for (int i = 0; i < 10; i++) {
         
-        //Trainingsschleife
-        for (int i = 0; i < learningSteps; i++) {
-            float f = (float) Math.random() * 2 - 1;
-            try {
-                sineMLP.backwardPass(new Vector(new float[] {f}), new Vector(new float[] {sine.apply(f)}));
-            } catch (DimensionMismatchException ex) {
-                System.out.println(ex.getMessage());
+            for (LabelImagePair labelImagePair : trainingData) {
+
+                count++;
+
+                Vector label = new Vector(10);
+                label.setValue(1, labelImagePair.label());
+                
+                digitClassifier.backwardPass(labelImagePair.image(), label);
+                digitClassifier.learn(optimizer);
+
+                if (count % 1000 == 0) {
+                    System.out.println(count);
+                }
+
             }
-            sineMLP.learn(gradientDescent);
+            
         }
-
-        try {
-            System.out.println("Expected for x=-0.8: " + sine.apply(-0.8f));
-            System.out.println("Prediction for x=-0.8: " + sineMLP.forwardPass(new Vector(new float[] {-0.8f})));
-            System.out.println("Expected for x=-0.6: " + sine.apply(-0.6f));
-            System.out.println("Prediction for x=-0.6: " + sineMLP.forwardPass(new Vector(new float[] {-0.6f})));
-            System.out.println("Expected for x=-0.4: " + sine.apply(-0.4f));
-            System.out.println("Prediction for x=-0.4: " + sineMLP.forwardPass(new Vector(new float[] {-0.4f})));
-            System.out.println("Expected for x=-0.2: " + sine.apply(-0.2f));
-            System.out.println("Prediction for x=-0.2: " + sineMLP.forwardPass(new Vector(new float[] {-0.2f})));
-            System.out.println("Expected for x=0: " + sine.apply(0.0f));
-            System.out.println("Prediction for x=0: " + sineMLP.forwardPass(new Vector(new float[] {0.0f})));
-            System.out.println("Expected for x=0.2: " + sine.apply(0.2f));
-            System.out.println("Prediction for x=0.2: " + sineMLP.forwardPass(new Vector(new float[] {0.2f})));
-            System.out.println("Expected for x=0.4: " + sine.apply(0.4f));
-            System.out.println("Prediction for x=0.4: " + sineMLP.forwardPass(new Vector(new float[] {0.4f})));
-            System.out.println("Expected for x=0.6: " + sine.apply(0.6f));
-            System.out.println("Prediction for x=0.6: " + sineMLP.forwardPass(new Vector(new float[] {0.6f})));
-            System.out.println("Expected for x=0.8: " + sine.apply(0.8f));
-            System.out.println("Prediction for x=0.8: " + sineMLP.forwardPass(new Vector(new float[] {0.8f})));
-        } catch (DimensionMismatchException ex) {
-            System.out.println(ex.getMessage());
+        
+        digitClassifier.saveToFile(new File("data/digitClassifier"));
+        System.out.println("Saved");
+        digitClassifier = new MLP(new File("data/digitClassifier"));
+        
+        List<LabelImagePair> testData = MNISTLoader.getData(new File("data/training/mnist_test.csv"));
+        
+        int hits = 0;
+        count = 0;
+        
+        for (LabelImagePair labelImagePair : testData) {
+            
+            count++;
+            
+            Vector output = digitClassifier.forwardPass(labelImagePair.image());
+            
+            int max = 0;
+            float maxValue = -1.0f;
+            
+            for (int i = 0; i < output.getSize(); i++) {
+                if (output.getValue(i) > maxValue) {
+                    maxValue = output.getValue(i);
+                    max = i;
+                }
+            }
+            
+            if (max == labelImagePair.label()) {
+                hits++;
+            }
+            
+            if (count % 1000 == 0) {
+                System.out.println(count);
+            }
+            
         }
-
+        
+        System.out.println("Accuracy: " + (double) hits / testData.size());
+        
     }
     
 }

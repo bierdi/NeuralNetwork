@@ -11,7 +11,7 @@ public class SoftMax extends ActivationFunction {
     @Override
     public Tensor apply(Tensor t) {
         
-        float max = Float.MIN_VALUE;
+        float max = -Float.MAX_VALUE;
         
         for (int i = 0; i < t.getSize(); i++) {
             if (t.getValueFlat(i) > max) {
@@ -37,7 +37,7 @@ public class SoftMax extends ActivationFunction {
         
         Tensor derivative = new Tensor(t.getDimensions());
         
-        float max = Float.MIN_VALUE;
+        float max = -Float.MAX_VALUE;
         
         for (int i = 0; i < t.getSize(); i++) {
             if (t.getValueFlat(i) > max) {
